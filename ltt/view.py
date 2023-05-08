@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect,url_for
+from flask import Blueprint, render_template, redirect,url_for,flash
 from ltt.forms import Additem , CommentForm
 from ltt import app
 from ltt import db
@@ -65,10 +65,12 @@ def views(items_id):
     form = CommentForm()
     if form.validate_on_submit():
         # if form.content.data contain taboo then give  warning
-        #text = form.content.data
-        #text = text.split(' ')
-        #for t in TABOO:
-        #    if t in text : update the current user col "warning" by +1 in the USER table  
+        text = form.content.data
+        text = text.split(' ')
+        for t in TABOO:
+            if t in text : 
+                flash('You comment contain taboo')
+                return redirect(url_for('view.views', items_id = items_id)) 
         
         comment = Comment(content = form.content.data, item_id = items_id)
         db.session.add(comment)
