@@ -12,8 +12,6 @@ class Additem(FlaskForm):
     submit = SubmitField(label='add')
 
 class CommentForm(FlaskForm):
-   
     content = StringField(label='content',  validators=[DataRequired()])
-    
     submit = SubmitField(label='post')
 
