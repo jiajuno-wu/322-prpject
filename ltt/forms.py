@@ -10,3 +10,10 @@ class Additem(FlaskForm):
     item_type = StringField(label='type',  validators=[DataRequired()])
     item_c = IntegerField(label='c type',  validators=[DataRequired()])
     submit = SubmitField(label='add')
+
+class CommentForm(FlaskForm):
+   
+    content = StringField(label='content',  validators=[DataRequired()])
+    
+    submit = SubmitField(label='post')
+
