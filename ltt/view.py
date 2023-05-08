@@ -69,7 +69,7 @@ def views(items_id):
         #text = text.split(' ')
         #for t in TABOO:
         #    if t in text : update the current user col "warning" by +1 in the USER table  
-        #
+        
         comment = Comment(content = form.content.data, item_id = items_id)
         db.session.add(comment)
         db.session.commit()
