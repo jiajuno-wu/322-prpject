@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect,url_for,flash
-from ltt.forms import Additem , CommentForm
+from ltt.forms import Additem , CommentForm, RateForm
 from ltt import app
 from ltt import db
 from ltt.models import Item, Comment
@@ -23,7 +23,7 @@ def additem():
     form = Additem()
    
     if form.validate_on_submit():  # function is called when press submit button
-        item_to_add = Item(id = form.id.data,
+        item_to_add = Item(
                        item_name = form.item_name.data,
                        item_price = form.item_price.data,
                        item_image = form.item_image.data,
@@ -77,4 +77,11 @@ def views(items_id):
         db.session.commit()
         return redirect(url_for('view.views', items_id = items_id))
 
-    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form)
+    rform = RateForm()
+    if rform.validate_on_submit():
+        item_to_show.rate_count = item_to_show.rate_count + 1
+        item_to_show.rate_acc = item_to_show.rate_acc + rform.rate.data
+        db.session.commit()
+        return redirect(url_for('view.views', items_id = items_id))
+    
+    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform)

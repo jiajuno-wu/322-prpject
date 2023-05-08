@@ -10,6 +10,8 @@ class Item(db.Model):
     item_type = db.Column(db.String(20))
     item_c = db.Column(db.Integer)
     comments = db.relationship("Comment",backref ="item")
+    rate_count = db.Column(db.Integer, default = 0)
+    rate_acc = db.Column(db.Integer,default = 0)
     def __repr__(self):
         return f'<Item"{self.item_name}">'
 
@@ -23,18 +25,7 @@ class Comment(db.Model):
         return f'<Comment"{self.content}">'
 
 
-class Rate(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    one_star = db.Column(db.Integer,default = 0)
-    two = db.Column(db.Integer,default = 0)
-    three = db.Column(db.Integer,default = 0)
-    four = db.Column(db.Integer,default = 0)
-    five = db.Column(db.Integer,default = 0)
-    item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
-    items = db.relationship("Item",backref="rate")
-    def __repr__(self):
-        return f'<Rate"{self.item_id}">'
-
 with app.app_context():
+    #db.drop_all()
     db.create_all()
 
