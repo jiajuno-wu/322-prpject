@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect,url_for,flash
-from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm
+from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm
 from ltt import app
 from ltt import db
 from ltt.models import Item, Comment, User
@@ -91,7 +91,20 @@ def views(items_id):
         db.session.commit()
         return redirect(url_for('view.views', items_id = items_id))
     
-    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform)
+    Pform = PurchaseForm()
+    if Pform.validate_on_submit():
+        if(current_user.balance >= item_to_show.item_price):
+            flash('Succesfully Purchased')
+            current_user.balance = current_user.balance - item_to_show.item_price
+            db.session.commit()
+            return render_template('success.html')
+        else:
+            flash('Insufficent Funds',category = 'danger')
+            current_user.warnings = current_user.warnings + 1
+            db.session.commit()
+            return render_template('failure.html')
+
+    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform)
 
 
 @view.route('/register',methods = ['GET','POST']) #Register route for users

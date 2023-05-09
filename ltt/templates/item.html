@@ -20,6 +20,14 @@
     <figcaption class="figure-caption">{{item_to_show.item_name}}</figcaption>
 </figure>
 
+<h1>Purchase</h1>
+<div class = "container">
+    <form method="POST" class = "form-register">
+        {{Pform.hidden_tag()}}
+        {{Pform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+</div>
+
 
 <h1>Rating</h1>
 {% if item_to_show.rate_count == 0   %}

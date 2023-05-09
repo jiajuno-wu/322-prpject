@@ -32,3 +32,6 @@ class LoginForm(FlaskForm):
 class DepositForm(FlaskForm):
     amount = IntegerField(label='Amount',  validators=[DataRequired()])
     submit = SubmitField(label='Deposit')
+
+class PurchaseForm(FlaskForm):
+    submit = SubmitField(label = 'Purchase')
