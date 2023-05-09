@@ -134,7 +134,7 @@ def login():
 
     return render_template('login.html',form=form)
 
-@view.route('deposit',methods= ['GET','POST'])
+@view.route('/deposit',methods= ['GET','POST'])
 def deposit():
     form = DepositForm()
     if form.validate_on_submit():

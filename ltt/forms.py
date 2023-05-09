@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField , IntegerField , SubmitField
+from wtforms import StringField , IntegerField , SubmitField, FloatField
 from wtforms.validators import Length , DataRequired
 
 class Additem(FlaskForm):
@@ -30,7 +30,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label='Sign in')
 
 class DepositForm(FlaskForm):
-    amount = IntegerField(label='Amount',  validators=[DataRequired()])
+    amount = FloatField(label='Amount',  validators=[DataRequired()])
     submit = SubmitField(label='Deposit')
 
 class PurchaseForm(FlaskForm):
