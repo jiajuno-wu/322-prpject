@@ -28,3 +28,7 @@ class LoginForm(FlaskForm):
     username_ = StringField(label='username',  validators=[DataRequired()])
     password_ = StringField(label='password',  validators=[DataRequired()])
     submit = SubmitField(label='Sign in')
+
+class DepositForm(FlaskForm):
+    amount = IntegerField(label='Amount',  validators=[DataRequired()])
+    submit = SubmitField(label='Deposit')

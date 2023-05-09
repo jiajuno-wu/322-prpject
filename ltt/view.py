@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect,url_for,flash
-from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm
+from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm
 from ltt import app
 from ltt import db
 from ltt.models import Item, Comment, User
@@ -120,3 +120,13 @@ def login():
             return render_template('failure.html')
 
     return render_template('login.html',form=form)
+
+@view.route('deposit',methods= ['GET','POST'])
+def deposit():
+    form = DepositForm()
+    if form.validate_on_submit():
+        current_user.balance = current_user.balance + form.amount.data
+        db.session.commit()
+        return redirect(url_for('view.home'))
+    return render_template('deposit.html', form = form)
+
