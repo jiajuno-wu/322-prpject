@@ -37,6 +37,8 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(120),default = None)
     balance = db.Column(db.Integer(),default=0)
     userType = db.Column(db.String(120),default = "Visitor")
+    status = db.Column(db.String(120),default = "Valid")
+   
 
     def __repr__(self):
         return f'<User"{self.username}">'
