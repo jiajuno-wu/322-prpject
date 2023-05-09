@@ -38,7 +38,8 @@ class User(db.Model,UserMixin):
     balance = db.Column(db.Integer(),default=0)
     userType = db.Column(db.String(120),default = "Visitor")
     status = db.Column(db.String(120),default = "Valid")
-   
+    compliments = db.Column(db.Integer,default = 0)
+    warnings = db.Column(db.Integer,default=0)
 
     def __repr__(self):
         return f'<User"{self.username}">'
@@ -48,6 +49,6 @@ class User(db.Model,UserMixin):
 
 
 with app.app_context():
-    #db.drop_all()
+    # db.drop_all()
     db.create_all()
 

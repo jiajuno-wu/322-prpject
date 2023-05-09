@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect,url_for,flash
 from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm
 from ltt import app
 from ltt import db
-from ltt.models import Item, Comment,User
-from flask_login import login_user
+from ltt.models import Item, Comment, User
+from flask_login import login_user, current_user
 
 import random
 
@@ -70,7 +70,13 @@ def views(items_id):
         text = text.split(' ')
         for t in TABOO:
             if t in text : 
-                flash('Your comment contain taboo')
+                current_user.warnings = current_user.warnings + 1
+                db.session.commit()
+                if current_user.warnings == 3:
+                    current_user.status = "Invalid"
+                    db.session.commit()
+                
+                flash('Your comment contain taboo',category = 'danger')
                 return redirect(url_for('view.views', items_id = items_id)) 
         
         comment = Comment(content = form.content.data, item_id = items_id)
