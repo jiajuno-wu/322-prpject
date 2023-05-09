@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{%block title%} Login Page {% endblock %}
+
+{% block contend %}
+
+<h1>Login</h1>
+<div class = "container">
+    <form method="POST" class = "form-singin">
+        {{form.hidden_tag()}}
+        {{form.username_.label()}}
+        {{form.username_(class="form-control", placeholder = "UserName" )}}
+
+        {{form.password_.label()}}
+        {{form.password_(class="form-control", placeholder = "Password" )}}
+        
+        {{form.submit (class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+</div>
+
+{% endblock %}

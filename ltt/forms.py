@@ -18,3 +18,13 @@ class CommentForm(FlaskForm):
 class RateForm(FlaskForm):
     rate = IntegerField(label='rate',  validators=[DataRequired()])
     submit = SubmitField(label='give')
+
+class RegisterUser(FlaskForm):
+    username_ = StringField(label='username',  validators=[DataRequired()])
+    password_ = StringField(label='password',  validators=[DataRequired()])
+    submit = SubmitField(label='Submit')
+
+class LoginForm(FlaskForm):
+    username_ = StringField(label='username',  validators=[DataRequired()])
+    password_ = StringField(label='password',  validators=[DataRequired()])
+    submit = SubmitField(label='Sign in')

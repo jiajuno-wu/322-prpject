@@ -1,5 +1,10 @@
-from ltt import db,app
+from ltt import db,app,login_manager
   #from this package import the db object 
+from flask_login import UserMixin
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 class Item(db.Model):
     __tablename__ = 'item'
@@ -23,6 +28,21 @@ class Comment(db.Model):
     
     def __repr__(self):
         return f'<Comment"{self.content}">'
+
+
+class User(db.Model,UserMixin):
+    __tablename__ = 'User'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120),default = None )
+    password = db.Column(db.String(120),default = None)
+    balance = db.Column(db.Integer(),default=0)
+    userType = db.Column(db.String(120),default = "Visitor")
+
+    def __repr__(self):
+        return f'<User"{self.username}">'
+    def check_password_correction(self,attempted_password):
+        return self.password == attempted_password
+
 
 
 with app.app_context():

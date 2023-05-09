@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect,url_for,flash
-from ltt.forms import Additem , CommentForm, RateForm
+from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm
 from ltt import app
 from ltt import db
-from ltt.models import Item, Comment
+from ltt.models import Item, Comment,User
+from flask_login import login_user
 
 import random
 
@@ -69,7 +70,7 @@ def views(items_id):
         text = text.split(' ')
         for t in TABOO:
             if t in text : 
-                flash('You comment contain taboo')
+                flash('Your comment contain taboo')
                 return redirect(url_for('view.views', items_id = items_id)) 
         
         comment = Comment(content = form.content.data, item_id = items_id)
@@ -85,3 +86,31 @@ def views(items_id):
         return redirect(url_for('view.views', items_id = items_id))
     
     return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform)
+
+
+@view.route('/register',methods = ['GET','POST']) #Register route for users
+def register():
+    form = RegisterUser()
+    if form.validate_on_submit():
+        user_to_add = User(username=form.username_.data, 
+                            password=form.password_.data
+                            )
+        db.session.add(user_to_add)
+        db.session.commit()
+        return redirect(url_for('view.register'))
+    return render_template('register.html', form = form)
+
+@view.route('/login',methods = ['GET','POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        attempted_user = User.query.filter_by(username = form.username_.data).first()
+        if attempted_user and attempted_user.check_password_correction (attempted_password = form.password_.data):
+            login_user(attempted_user)
+            flash(f'Success! You are logged in as :{attempted_user.username}', category = 'success')
+            return render_template('success.html')
+        else:
+            flash('Username and password is incorrect! Please try again',category = 'danger')
+            return render_template('failure.html')
+
+    return render_template('login.html',form=form)
