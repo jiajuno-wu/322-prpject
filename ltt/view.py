@@ -3,7 +3,7 @@ from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,De
 from ltt import app
 from ltt import db
 from ltt.models import Item, Comment, User
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user
 
 import random
 
@@ -120,7 +120,7 @@ def register():
                             )
         db.session.add(user_to_add)
         db.session.commit()
-        return redirect(url_for('view.register'))
+        return redirect(url_for('view.login'))
     return render_template('register.html', form = form)
 
 @view.route('/login',methods = ['GET','POST'])
@@ -137,6 +137,11 @@ def login():
             return render_template('failure.html')
 
     return render_template('login.html',form=form)
+
+@view.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('view.home'))
 
 @view.route('/deposit',methods= ['GET','POST'])
 def deposit():
