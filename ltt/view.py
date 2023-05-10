@@ -33,7 +33,7 @@ def additem():
         db.session.add(item_to_add)
         db.session.commit()
         return redirect(url_for('view.additem'))
-    return render_template('additems.html',form=form)
+    return render_template('additems.html',form=form,current_user=current_user)
 
 
 
@@ -69,16 +69,19 @@ def views(items_id):
         text = form.content.data
         text = text.split(' ')
         for t in TABOO:
-            if t in text : 
-                current_user.warnings = current_user.warnings + 1
-                db.session.commit()
-                if current_user.warnings == 3:
-                    current_user.status = "Invalid"
+            if t in text :
+                if(current_user.is_active == False):
+                    flash('Your comment contain taboo',category = 'danger')
+                    return redirect(url_for('view.views', items_id = items_id)) 
+                else:
+                    current_user.warnings = current_user.warnings + 1
                     db.session.commit()
+                    if current_user.warnings == 3:
+                        current_user.status = "Invalid"
+                        db.session.commit()
                 
-                flash('Your comment contain taboo',category = 'danger')
-                return redirect(url_for('view.views', items_id = items_id)) 
-        
+                    flash('Your comment contain taboo',category = 'danger')
+                    return redirect(url_for('view.views', items_id = items_id)) 
         comment = Comment(content = form.content.data, item_id = items_id)
         db.session.add(comment)
         db.session.commit()
@@ -104,7 +107,7 @@ def views(items_id):
             db.session.commit()
             return render_template('failure.html')
 
-    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform)
+    return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform,current_user=current_user)
 
 
 @view.route('/register',methods = ['GET','POST']) #Register route for users
@@ -112,7 +115,8 @@ def register():
     form = RegisterUser()
     if form.validate_on_submit():
         user_to_add = User(username=form.username_.data, 
-                            password=form.password_.data
+                            password=form.password_.data,
+                            userType = form.userType_.data
                             )
         db.session.add(user_to_add)
         db.session.commit()
@@ -142,4 +146,6 @@ def deposit():
         db.session.commit()
         return redirect(url_for('view.home'))
     return render_template('deposit.html', form = form)
+
+
 

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField , IntegerField , SubmitField, FloatField
+from wtforms import StringField , IntegerField , SubmitField, FloatField, SelectField
 from wtforms.validators import Length , DataRequired
 
 class Additem(FlaskForm):
@@ -22,6 +22,7 @@ class RateForm(FlaskForm):
 class RegisterUser(FlaskForm):
     username_ = StringField(label='username',  validators=[DataRequired()])
     password_ = StringField(label='password',  validators=[DataRequired()])
+    userType_ = SelectField(u'UserType', choices=[('Customer', 'Customer'), ('Employee', 'Employee'), ('Admin', 'Admin')])
     submit = SubmitField(label='Submit')
 
 class LoginForm(FlaskForm):

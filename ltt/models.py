@@ -44,11 +44,11 @@ class User(db.Model,UserMixin):
     def __repr__(self):
         return f'<User"{self.username}">'
     def check_password_correction(self,attempted_password):
-        return self.password == attempted_password
+        return self.password == attempted_password 
 
 
 
 with app.app_context():
-    # db.drop_all()
+    db.drop_all()
     db.create_all()
 
