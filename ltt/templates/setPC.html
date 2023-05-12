@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{%block title%} Bulid {% endblock %}
+
+{% block contend %}
+{%if current_user.userType == "Employee"%} 
+    <h1>Add PC</h1>
+    <div class = "container">
+        <form method="POST" class = "form-register">
+            {{form.hidden_tag()}}
+            
+            {{ form.PCname.label() }}
+            {{ form.PCname(class="form-control")}}
+            
+
+            {{ form.CPU.label() }}
+            {{ form.CPU(class="form-control")}}
+
+            {{ form.GPU.label() }}
+            {{ form.GPU(class="form-control")}}
+
+            {{ form.MB.label() }}
+            {{ form.MB(class="form-control")}}
+
+            {{ form.RAM.label() }}
+            {{ form.RAM(class="form-control")}}
+
+            {{form.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+        </form>
+    </div>
+{%else%}
+    <div class = "container">   
+        <h1>YOU DONT HAVE PERMISSION TO ADD PC </h1>  
+    </div>
+{%endif%}
+
+{% endblock %}

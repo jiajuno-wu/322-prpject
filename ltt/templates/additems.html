@@ -8,6 +8,8 @@
         <form method="POST" class = "form-register">
             {{form.hidden_tag()}}
             
+            {{ form.id.label() }}
+            {{ form.id(class="form-control")}}
             
 
             {{ form.item_name.label() }}

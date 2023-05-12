@@ -3,7 +3,7 @@ from wtforms import StringField , IntegerField , SubmitField, FloatField, Select
 from wtforms.validators import Length , DataRequired
 
 class Additem(FlaskForm):
-    #id = IntegerField(label= 'id', validators=[DataRequired()])
+    id = IntegerField(label= 'id', validators=[DataRequired()])
     item_name = StringField(label='item_name',  validators=[DataRequired()])
     item_price = IntegerField(label='item_price',  validators=[DataRequired()])
     item_image = StringField(label='image_path',validators=[DataRequired()])
@@ -36,3 +36,11 @@ class DepositForm(FlaskForm):
 
 class PurchaseForm(FlaskForm):
     submit = SubmitField(label = 'Purchase')
+
+class PCForm(FlaskForm):
+    PCname = StringField(label='item_name',  validators=[DataRequired()])
+    CPU = IntegerField(label= 'id', validators=[DataRequired()])
+    GPU = IntegerField(label= 'id', validators=[DataRequired()])
+    MB = IntegerField(label= 'id', validators=[DataRequired()])
+    RAM = IntegerField(label= 'id', validators=[DataRequired()])
+    submit = SubmitField(label = 'Create')

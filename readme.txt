@@ -1,1 +1,1 @@
-git test
+1. need to find an way to clear the flash message or only show the most recent message 

@@ -46,9 +46,16 @@ class User(db.Model,UserMixin):
     def check_password_correction(self,attempted_password):
         return self.password == attempted_password 
 
+class PC(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    PCname = db.Column(db.String(120))
+    cpu = db.Column(db.Integer, db.ForeignKey('item.id'))
+    gpu = db.Column(db.Integer, db.ForeignKey('item.id'))
+    ram = db.Column(db.Integer, db.ForeignKey('item.id'))
+    MB = db.Column(db.Integer, db.ForeignKey('item.id'))
+
 
 
 with app.app_context():
     # db.drop_all()
     db.create_all()
-

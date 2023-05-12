@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect,url_for,flash
-from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm
+from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm,PCForm
 from ltt import app
 from ltt import db
-from ltt.models import Item, Comment, User
+from ltt.models import Item, Comment, User, PC
 from flask_login import login_user, current_user, logout_user
 
 import random
@@ -25,6 +25,7 @@ def additem():
    
     if form.validate_on_submit():  # function is called when press submit button
         item_to_add = Item(
+                       id = form.id.data,
                        item_name = form.item_name.data,
                        item_price = form.item_price.data,
                        item_image = form.item_image.data,
@@ -128,10 +129,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(username = form.username_.data).first()
+        if attempted_user.status == "Invalid":
+            flash("you are suspended")
+            return render_template('login.html',form=form)
         if attempted_user and attempted_user.check_password_correction (attempted_password = form.password_.data):
             login_user(attempted_user)
             flash(f'Success! You are logged in as :{attempted_user.username}', category = 'success')
-            return render_template('success.html')
+            return redirect(url_for("view.home"))
         else:
             flash('Username and password is incorrect! Please try again',category = 'danger')
             return render_template('failure.html')
@@ -153,4 +157,32 @@ def deposit():
     return render_template('deposit.html', form = form)
 
 
+@view.route('/setPC',methods = ['GET','POST'])
+def setPC():
+    form = PCForm()
+    if form.validate_on_submit():
+        cpu = Item.query.get_or_404(form.CPU.data)
+        gpu = Item.query.get_or_404(form.GPU.data)
+        ram = Item.query.get_or_404(form.RAM.data)
+        mb = Item.query.get_or_404(form.MB.data)
+        if cpu.item_c == gpu.item_c == ram.item_c == mb.item_c:
+            pc = PC(PCname = form.PCname.data,
+                    cpu = cpu.id,
+                    gpu = gpu.id,
+                    ram = ram.id,
+                    MB = mb.id)
+            db.session.add(pc)
+            db.session.commit()
+            return redirect(url_for('view.setPC'))
+        else:
+            return redirect(url_for('view.setPC'))
+    return render_template('setPC.html', form = form)
+
+@view.route('/prebulid')
+def prebulid():
+    pc = PC.query.all()
+    return render_template("prebulid.html", pc = pc)
+
+
+        
 
