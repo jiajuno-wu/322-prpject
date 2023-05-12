@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect,url_for,flash
 from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm
 from ltt import app
 from ltt import db
-from ltt.models import Item, Comment, User, Application
+from ltt.models import Item, Comment, User, Application, Message
 from flask_login import login_user, current_user, logout_user
 
 import random
@@ -51,7 +51,7 @@ def delete(id):
         db.session.commit()
         return redirect(url_for('view.displayItem'))
     except:
-        return 'There was an error deleting'
+        return 'There was an error approving'
 
 
 
@@ -174,15 +174,21 @@ def approval(id):
         db.session.commit()
         return redirect(url_for('view.verifyApplications'))
     except:
-        return redirect(url_for('view.verifyApplications'))
+        return 'There was an error approving'
 
 @view.route('/rejection/<int:id>')
 def rejection(id):
     application_to_reject = Application.query.get_or_404(id)
+    message_to_send = Message(username = application_to_reject.username)
     try:
+        db.session.add(message_to_send)
         db.session.delete(application_to_reject)
         db.session.commit()
         return redirect(url_for('view.verifyApplications'))
     except:
-        return redirect(url_for('view.verifyApplications'))
+        return 'There was an error rejecting'
     
+@view.route('/messages', methods = ['GET', 'POST'])
+def messages():
+    messages = Message.query.all()
+    return render_template('applicationsRejected.html', messages = messages)

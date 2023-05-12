@@ -52,6 +52,10 @@ class Application(db.Model):
     username = db.Column(db.String(120), default = None)
     password = db.Column(db.String(120), default = None)
 
+class Message(db.Model):
+    _tablename_ = 'Message'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120), default = None)
 
 
 with app.app_context():
