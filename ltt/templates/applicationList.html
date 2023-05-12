@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+<h1>Applications</h1>
+<table class = "table table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for applicant in applicants %}
+        <tr>
+            <td>{{applicant.id}}</td>
+            <td>{{applicant.username}}</td>
+        </tr>
+        <td>
+            <a href="/approval/{{applicant.id}}">Approve</a>
+        </td>
+        <td>
+            <a href="/rejection/{{applicant.id}}">Reject</a>
+        </td>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+
+
+{% endblock %}
