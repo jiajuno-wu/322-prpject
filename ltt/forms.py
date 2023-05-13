@@ -30,6 +30,10 @@ class LoginForm(FlaskForm):
     password_ = StringField(label='password',  validators=[DataRequired()])
     submit = SubmitField(label='Sign in')
 
+class ApplicationForm(FlaskForm):
+    username_  = StringField(label='username',  validators=[DataRequired()])
+    submit = SubmitField(label='Application')
+
 class DepositForm(FlaskForm):
     amount = FloatField(label='Amount',  validators=[DataRequired()])
     submit = SubmitField(label='Deposit')

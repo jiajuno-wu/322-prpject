@@ -45,6 +45,12 @@ class User(db.Model,UserMixin):
         return f'<User"{self.username}">'
     def check_password_correction(self,attempted_password):
         return self.password == attempted_password 
+    
+class Application(db.Model):
+    _tablename_ = 'Application'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120), default = None)
+    password = db.Column(db.String(120), default = None)
 
 class PC(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -54,8 +60,12 @@ class PC(db.Model):
     ram = db.Column(db.Integer, db.ForeignKey('item.id'))
     MB = db.Column(db.Integer, db.ForeignKey('item.id'))
 
+class Message(db.Model):
+    _tablename_ = 'Message'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120), default = None)
 
 
 with app.app_context():
-    # db.drop_all()
+    db.drop_all()
     db.create_all()

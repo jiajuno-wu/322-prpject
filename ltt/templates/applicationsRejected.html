@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+<h1>Applications rejected</h1>
+<table class = "table table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in messages %}
+        <tr>
+            <td>{{message.id}}</td>
+            <td>{{message.username}}</td>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+
+
+{% endblock %}
