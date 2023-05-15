@@ -30,7 +30,11 @@
                     <a class="nav-link" href="/logout">Logout</a>
                   {%endif%}
                   {%if current_user.userType == "Employee"%}
-                    <a class="nav-link" href = /additems>Add Items</a>
+                    <a class="nav-link" href = /additem>Add Items</a>
+                    <a class="nav-link" href = /applications>Applications</a>
+                  {%endif%}
+                  {%if current_user.userType == "Employee"%}
+                  <a class="nav-link" href = /messages>Messages</a>
                   {%endif%}
                   <a class="nav-link disabled">Disabled</a>
 

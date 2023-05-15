@@ -45,6 +45,12 @@ class User(db.Model,UserMixin):
         return f'<User"{self.username}">'
     def check_password_correction(self,attempted_password):
         return self.password == attempted_password 
+    
+class Application(db.Model):
+    _tablename_ = 'Application'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120), default = None)
+    password = db.Column(db.String(120), default = None)
 
 class PC(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -56,6 +62,10 @@ class PC(db.Model):
     rate_count = db.Column(db.Integer, default = 0)
     rate_acc = db.Column(db.Integer,default = 0)
 
+class Message(db.Model):
+    _tablename_ = 'Message'
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(120), default = None)
 
 
 with app.app_context():

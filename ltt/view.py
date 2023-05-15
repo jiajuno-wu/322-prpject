@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect,url_for,flash
 from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm,PCForm
 from ltt import app
 from ltt import db
-from ltt.models import Item, Comment, User, PC
+from ltt.models import Item, Comment, User, Application, Message,PC
 from flask_login import login_user, current_user, logout_user
 
 import random
@@ -44,8 +44,6 @@ def displayItem():
     return render_template('displayItem.html', items = items)
 
 
-
-
 @view.route('/delete/<int:id>')  #a route bind to a delete button hit when the button is pressed
 def delete(id):
     item_to_delete = Item.query.get_or_404(id)
@@ -54,8 +52,7 @@ def delete(id):
         db.session.commit()
         return redirect(url_for('view.displayItem'))
     except:
-        return 'There was an error deleting'
-
+        return 'There was an error approving'
 
 
 
@@ -111,16 +108,24 @@ def views(items_id):
     return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform,current_user=current_user)
 
 
-@view.route('/register',methods = ['GET','POST']) #Register route for users
+@view.route('/register', methods = ['GET','POST']) #Register route for users
 def register():
     form = RegisterUser()
     if form.validate_on_submit():
-        user_to_add = User(username=form.username_.data, 
+        if form.userType_.data == "Customer":
+            application_to_add = Application(username = form.username_.data,
+                                             password = form.password_.data)
+            db.session.add(application_to_add)
+            db.session.commit()
+            flash(f'Application submitted.', category='succes')
+            return render_template('applicationSubmitted.html')
+        else:
+            user_to_add = User(username=form.username_.data, 
                             password=form.password_.data,
                             userType = form.userType_.data
                             )
-        db.session.add(user_to_add)
-        db.session.commit()
+            db.session.add(user_to_add)
+            db.session.commit()
         return redirect(url_for('view.login'))
     return render_template('register.html', form = form)
 
@@ -156,6 +161,10 @@ def deposit():
         return redirect(url_for('view.home'))
     return render_template('deposit.html', form = form)
 
+@view.route('/applications', methods = ['GET', 'POST'])
+def verifyApplications():
+    applicants = Application.query.all()
+    return render_template('applicationList.html', applicants = applicants)
 
 @view.route('/setPC',methods = ['GET','POST'])
 def setPC():
@@ -208,3 +217,19 @@ def customize():
 
     return render_template("setPC.html", form = form)
 
+@view.route('/rejection/<int:id>')
+def rejection(id):
+    application_to_reject = Application.query.get_or_404(id)
+    message_to_send = Message(username = application_to_reject.username)
+    try:
+        db.session.add(message_to_send)
+        db.session.delete(application_to_reject)
+        db.session.commit()
+        return redirect(url_for('view.verifyApplications'))
+    except:
+        return 'There was an error rejecting'
+    
+@view.route('/messages', methods = ['GET', 'POST'])
+def messages():
+    messages = Message.query.all()
+    return render_template('applicationsRejected.html', messages = messages)
