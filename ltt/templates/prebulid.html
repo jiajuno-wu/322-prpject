@@ -12,6 +12,7 @@
             <th scope="col"> GPU</th>
             <th scope="col">RAM </th>
             <th scope="col">MB </th>
+            <th scope="col">Rate </th>
             
         </tr>
     </thead>
@@ -24,7 +25,13 @@
             <td>{{p.gpu}}</td>
             <td>{{p.ram}}</td>
             <td>{{p.MB}}</td>
-            
+            {% if p.rate_count == 0   %}
+            <td>0.0</td>
+            {% else %}
+            {% set rate = p.rate_acc/p.rate_count %}
+            <td>{{rate}}</td>
+            {% endif %}
+            <td><a href="/buy/{{p.id}}">BUY</a></td>
         </tr>
         {% endfor %}
     </tbody>

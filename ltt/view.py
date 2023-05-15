@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect,url_for,flash
+from flask import Blueprint, render_template, redirect,url_for,flash, request
 from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm,PCForm
 from ltt import app
 from ltt import db
@@ -10,6 +10,9 @@ import random
 view = Blueprint("view",__name__)
 
 TABOO = ["dead","death"]
+
+id_list = [0,0,0,0]
+
 
 @view.route('/')
 @view.route('/home')   #home page to show all the item
@@ -108,6 +111,8 @@ def views(items_id):
     return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform,current_user=current_user)
 
 
+
+
 @view.route('/register', methods = ['GET','POST']) #Register route for users
 def register():
     form = RegisterUser()
@@ -128,6 +133,9 @@ def register():
             db.session.commit()
         return redirect(url_for('view.login'))
     return render_template('register.html', form = form)
+
+
+
 
 @view.route('/login',methods = ['GET','POST'])
 def login():
@@ -152,6 +160,8 @@ def logout():
     logout_user()
     return redirect(url_for('view.home'))
 
+
+
 @view.route('/deposit',methods= ['GET','POST'])
 def deposit():
     form = DepositForm()
@@ -166,6 +176,8 @@ def verifyApplications():
     applicants = Application.query.all()
     return render_template('applicationList.html', applicants = applicants)
 
+
+#this is for the staff
 @view.route('/setPC',methods = ['GET','POST'])
 def setPC():
     form = PCForm()
@@ -187,35 +199,67 @@ def setPC():
             return redirect(url_for('view.setPC'))
     return render_template('setPC.html', form = form)
 
+
+
 @view.route('/prebulid')
 def prebulid():
     pc = PC.query.all()
     return render_template("prebulid.html", pc = pc)
 
 
+
+#this is for the user
 @view.route('/customize',methods = ['GET','POST'])
 def customize():
-    form = PCForm()
-    if form.validate_on_submit():
-        cpu = Item.query.get_or_404(form.CPU.data)
-        gpu = Item.query.get_or_404(form.GPU.data)
-        ram = Item.query.get_or_404(form.RAM.data)
-        mb = Item.query.get_or_404(form.MB.data)
+    flag = 0 #if flag is 0 which mean it is no compatiable
+    pform = PCForm()
+    if pform.validate_on_submit():
+        cpu = Item.query.get_or_404(pform.CPU.data)
+        gpu = Item.query.get_or_404(pform.GPU.data)
+        ram = Item.query.get_or_404(pform.RAM.data)
+        mb = Item.query.get_or_404(pform.MB.data)
+        id_list [0] = pform.CPU.data
+        id_list [1] = pform.GPU.data
+        id_list [2] = pform.RAM.data
+        id_list [3] = pform.MB.data
+        sum = cpu.item_price + gpu.item_price + ram.item_price + mb.item_price
         if cpu.item_c == gpu.item_c == ram.item_c == mb.item_c:
-            if current_user.balance < (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price):
+            flag = 1
+            if current_user.balance < sum:
                 flash("not enough balance") 
                 current_user.warnings = current_user.warnings + 1
                 db.session.commit()
-                return redirect(url_for('view.customize'))
+                return redirect(url_for('view.deposit'))
             else:
                 flash("purchased")
-                current_user.balance = current_user.balance - (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price)
+                current_user.balance = current_user.balance - sum
                 db.session.commit()
-                return redirect(url_for('view.rating'))
+                return render_template("customize.html", pform = pform, flag = flag)
         else:
+            flag = 0
             flash("NOT compatible")
+            return redirect(url_for('view.customize'))
+    return render_template("customize.html", pform = pform, flag = flag)
 
-    return render_template("setPC.html", form = form)
+
+
+
+@view.route('/approval/<int:id>')
+def approval(id):
+    application_to_approve = Application.query.get_or_404(id)
+    try:
+        user_to_add = User(username = application_to_approve.username,
+                           password = application_to_approve.password,
+                           userType = "Customer")
+        db.session.add(user_to_add)
+        db.session.delete(application_to_approve)
+        db.session.commit()
+        return redirect(url_for('view.verifyApplications'))
+    except:
+        return 'There was an error approving'
+
+
+
 
 @view.route('/rejection/<int:id>')
 def rejection(id):
@@ -228,8 +272,48 @@ def rejection(id):
         return redirect(url_for('view.verifyApplications'))
     except:
         return 'There was an error rejecting'
-    
+
+
+
+
 @view.route('/messages', methods = ['GET', 'POST'])
 def messages():
     messages = Message.query.all()
     return render_template('applicationsRejected.html', messages = messages)
+
+
+@view.route('/buy/<int:id>', methods = ['GET', 'POST'])
+def buy(id):
+    pc = PC.query.get_or_404(id)
+    cpu = Item.query.get_or_404(pc.cpu)
+    gpu = Item.query.get_or_404(pc.gpu)
+    ram = Item.query.get_or_404(pc.ram)
+    mb = Item.query.get_or_404(pc.MB)
+    sum = cpu.item_price + gpu.item_price + ram.item_price + mb.item_price
+    if current_user.balance < sum :
+        current_user.warnings = current_user.warnings + 1
+        db.session.commit()
+        return redirect(url_for('view.deposit'))
+    else:
+        current_user.balance = current_user.balance - (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price)
+        db.session.commit()
+        return redirect(url_for('view.rate',id = id))
+    
+@view.route('/rate/<int:id>',methods = ['GET', 'POST'])
+def rate(id):
+    pc = PC.query.get_or_404(id)
+    rform = RateForm()
+    if rform.validate_on_submit():
+        pc.rate_count = pc.rate_count + 1
+        pc.rate_acc = pc.rate_acc + rform.rate.data
+        db.session.commit()
+        return redirect(url_for('view.prebulid'))
+    return render_template('rating.html', rform = rform)
+
+@view.route('/promote')
+def promote():
+    pc = PC(PCname = current_user.id, cpu = id_list [0], gpu = id_list [1], ram = id_list [2], MB = id_list [3])
+    db.session.add(pc)
+    db.session.commit()
+    return redirect(url_for('view.prebulid'))
+

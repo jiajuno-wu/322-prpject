@@ -17,8 +17,8 @@
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                   <a class="nav-link active" aria-current="page" href="/home">Home</a>
-                  <a class="nav-link" href="#">Features</a>
-                  <a class="nav-link" href="#">Pricing</a>
+                  <a class="nav-link" href="/customize">customize</a>
+                  <a class="nav-link" href="/prebulid">PC list</a>
                   {%if current_user.is_active == False%}
                     <a class="nav-link" href="/login">Login</a>
                     <a class="nav-link" href="/register">Register</a>
@@ -32,6 +32,7 @@
                   {%if current_user.userType == "Employee"%}
                     <a class="nav-link" href = /additem>Add Items</a>
                     <a class="nav-link" href = /applications>Applications</a>
+                    <a class="nav-link" href = /setPC>setPC</a>
                   {%endif%}
                   {%if current_user.userType == "Employee"%}
                   <a class="nav-link" href = /messages>Messages</a>
