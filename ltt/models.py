@@ -53,9 +53,11 @@ class PC(db.Model):
     gpu = db.Column(db.Integer, db.ForeignKey('item.id'))
     ram = db.Column(db.Integer, db.ForeignKey('item.id'))
     MB = db.Column(db.Integer, db.ForeignKey('item.id'))
+    rate_count = db.Column(db.Integer, default = 0)
+    rate_acc = db.Column(db.Integer,default = 0)
 
 
 
 with app.app_context():
-    # db.drop_all()
+    #db.drop_all()
     db.create_all()

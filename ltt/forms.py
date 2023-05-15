@@ -38,9 +38,9 @@ class PurchaseForm(FlaskForm):
     submit = SubmitField(label = 'Purchase')
 
 class PCForm(FlaskForm):
-    PCname = StringField(label='item_name',  validators=[DataRequired()])
-    CPU = IntegerField(label= 'id', validators=[DataRequired()])
-    GPU = IntegerField(label= 'id', validators=[DataRequired()])
-    MB = IntegerField(label= 'id', validators=[DataRequired()])
-    RAM = IntegerField(label= 'id', validators=[DataRequired()])
-    submit = SubmitField(label = 'Create')
+    PCname = StringField(label='PCname',  validators=[DataRequired()])
+    CPU = IntegerField(label= 'CPU id', validators=[DataRequired()])
+    GPU = IntegerField(label= 'GPU id', validators=[DataRequired()])
+    MB = IntegerField(label= 'MB id', validators=[DataRequired()])
+    RAM = IntegerField(label= 'RAM id', validators=[DataRequired()])
+    submit = SubmitField(label = 'Submit')

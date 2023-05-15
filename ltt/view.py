@@ -184,5 +184,27 @@ def prebulid():
     return render_template("prebulid.html", pc = pc)
 
 
-        
+@view.route('/customize',methods = ['GET','POST'])
+def customize():
+    form = PCForm()
+    if form.validate_on_submit():
+        cpu = Item.query.get_or_404(form.CPU.data)
+        gpu = Item.query.get_or_404(form.GPU.data)
+        ram = Item.query.get_or_404(form.RAM.data)
+        mb = Item.query.get_or_404(form.MB.data)
+        if cpu.item_c == gpu.item_c == ram.item_c == mb.item_c:
+            if current_user.balance < (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price):
+                flash("not enough balance") 
+                current_user.warnings = current_user.warnings + 1
+                db.session.commit()
+                return redirect(url_for('view.customize'))
+            else:
+                flash("purchased")
+                current_user.balance = current_user.balance - (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price)
+                db.session.commit()
+                return redirect(url_for('view.rating'))
+        else:
+            flash("NOT compatible")
+
+    return render_template("setPC.html", form = form)
 
