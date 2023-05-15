@@ -48,3 +48,19 @@ class PCForm(FlaskForm):
     MB = IntegerField(label= 'id', validators=[DataRequired()])
     RAM = IntegerField(label= 'id', validators=[DataRequired()])
     submit = SubmitField(label = 'Create')
+
+class InquiryForm(FlaskForm):
+    # purchase_ = SelectField(u'UserType', choices=[('Customer', 'Customer'), ('Employee', 'Employee'), ('Admin', 'Admin')])
+    submit = SubmitField(label = 'Open Inquiry')
+
+class AddInquiryMessageForm(FlaskForm):
+    content = StringField(label='content',  validators=[DataRequired()])
+    submit = SubmitField(label='Post Message')
+
+class CloseInquiryForm(FlaskForm):
+    submit = SubmitField(label='Close')
+
+class FeedbackForm(FlaskForm):
+    feedbackType_ = SelectField(u'Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')])
+    content_ = StringField(label='comments',  validators=[DataRequired()])
+    submit = SubmitField(label='Send Feedback')

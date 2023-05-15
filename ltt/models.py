@@ -65,6 +65,36 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(120), default = None)
 
+class Purchase(db.Model):
+    id = db.Column(db.Integer,primary_key= True)
+    user_id = db.Column(db.Integer,db.ForeignKey('User.id'))
+    pc_id = db.Column(db.Integer,db.ForeignKey('pc.id'))
+
+class Inquiry(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('User.id')) 
+    purchase_id = db.Column(db.Integer,db.ForeignKey('purchase.id'))
+    messages = db.relationship("InqMessages",backref="inquiry")
+    status = db.Column(db.String(120), default = "open")
+    employee_id = db.Column(db.Integer,db.ForeignKey('User.id')) 
+
+class InqMessages(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    content = db.Column(db.String(120))
+    inquiry_id = db.Column(db.Integer, db.ForeignKey('inquiry.id'))
+    user_id = db.Column(db.Integer,db.ForeignKey('User.id')) 
+    
+    def __repr__(self):
+        return f'<Message"{self.content}">'
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    inquiry_id = db.Column(db.Integer, db.ForeignKey('inquiry.id'))
+    feedbackType = db.Column(db.String(120))
+    employee_id = db.Column(db.Integer,db.ForeignKey('User.id'))     
+    customer_id = db.Column(db.Integer,db.ForeignKey('User.id'))
+    status = db.Column(db.String(120), default = "open")
+    comment = db.Column(db.String(),default=None )
 
 with app.app_context():
     # db.drop_all()

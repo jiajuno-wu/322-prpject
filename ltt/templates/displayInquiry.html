@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<table class = "table table-hover">
+    <tbody>
+        {% for comment in comments %}
+            {%if User.query.get_or_404(comment.user_id).userType == "Customer"%}
+                <tr style="background-color:powderblue;">
+            {%else%}    
+                <tr style="background-color:rgb(230, 176, 176);"> 
+            {%endif%}
+            <td>{{comment.content}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{%if Inquiry.query.get_or_404(inquiry_to_show.id).status == "open" %}
+    <h1>Talk to Inquiry</h1>
+    <div class = "container">
+        <form method="POST" class = "form-register">
+            {{form.hidden_tag()}}
+            {{ form.content.label() }}
+            {{ form.content(class="form-control")}}
+
+            {{form.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+        </form>
+    </div>
+
+    <h1>Close Inquiry</h1>
+    <div class = "container">
+        <form method="POST" class = "form-register">
+            {{cform.hidden_tag()}}
+            {{cform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+        </form>
+    </div>
+{%else%}
+    <h1>THIS INQUIRY IS CLOSED</h1>
+    {%print Feedback.query.filter_by(inquiry_id = inquiry_to_show.id).status %}
+    {%if Feedback.query.filter_by(inquiry_id = inquiry_to_show.id) == None %}
+    <h1>Leave Feedback</h1>
+    <div class = "container">
+        <form method="POST" class = "form-register">
+            {{fform.hidden_tag()}}
+            {{fform.feedbackType_.label()}}
+            {{fform.feedbackType_(class="form-control", placeholder = "Feedback")}}
+            {{ fform.content_.label() }}
+            {{ fform.content_(class="form-control")}}
+
+            {{fform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+        </form>
+    </div>
+    {%endif%}
+
+{%endif%}
+
+{%endblock%}
