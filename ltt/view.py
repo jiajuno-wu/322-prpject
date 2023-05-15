@@ -240,6 +240,12 @@ def viewInquiry():
         return redirect(url_for('view.currentInquiry',inquirys_id = inquiry_to_add.id))
     return render_template('inquiry.html',form=form,inquiry_to_show = inquiry_to_show)
 
+
+@view.route('/inquirypage' , methods = ['GET','POST'])
+def openInquiries():
+    inquiries_to_show = Inquiry.query.filter_by(user_id = current_user.id)
+    return render_template('openInquiries.html',inquiries_to_show=inquiries_to_show,Item=Item,Purchase=Purchase)
+
 @view.route('/inquirypage/<int:inquirys_id>',methods = ['GET','POST'])
 def currentInquiry(inquirys_id):
     inquiry_to_show = Inquiry.query.get_or_404(inquirys_id)
