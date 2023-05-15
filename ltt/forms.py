@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField , IntegerField , SubmitField, FloatField, SelectField
 from wtforms.validators import Length , DataRequired
+from ltt.models import Item, Comment, User, Application, Message,PC,Purchase,Inquiry,InqMessages, Feedback
 
 class Additem(FlaskForm):
     id = IntegerField(label= 'id', validators=[DataRequired()])
@@ -50,7 +51,7 @@ class PCForm(FlaskForm):
     submit = SubmitField(label = 'Create')
 
 class InquiryForm(FlaskForm):
-    # purchase_ = SelectField(u'UserType', choices=[('Customer', 'Customer'), ('Employee', 'Employee'), ('Admin', 'Admin')])
+    purchase_ = SelectField(u'Choose Purchase', choices=[], coerce=int, validate_choice=True)
     submit = SubmitField(label = 'Open Inquiry')
 
 class AddInquiryMessageForm(FlaskForm):

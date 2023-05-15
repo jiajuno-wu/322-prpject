@@ -14,13 +14,24 @@
 
 <table class = "table table-hover">
     <tbody>
-      {%for inquiry in inquiries_to_show%}
-      <tr>
-        <td>id {{inquiry.id}}</td>
-        <td>purchase id{{Item.query.get_or_404(Purchase.query.get_or_404(inquiry.purchase_id).pc_id) }}</td>
-        <td>employee id{{inquiry.employee_id}}</td>
-      </tr>
-      {%endfor%}
+      {%if current_user.userType == "Employee"%}
+        {%for inquiry in inquiries_to_show_employee%}
+          <tr>
+            <td>id {{inquiry.id}}</td>
+            <td>purchase id{{Item.query.get_or_404(Purchase.query.get_or_404(inquiry.purchase_id).pc_id) }}</td>
+            <td>employee id{{inquiry.employee_id}}</td>
+          </tr>
+        {%endfor%}
+      {%elif current_user.userType == "Customer"%}
+        {%for inquiry in inquiries_to_show_customer%}
+          <tr>
+            <td>id {{inquiry.id}}</td>
+            <td>purchase id{{Item.query.get_or_404(Purchase.query.get_or_404(inquiry.purchase_id).pc_id) }}</td>
+            <td>employee id{{inquiry.employee_id}}</td>
+          </tr>
+          {%endfor%}
+      {%endif%}
+
     </tbody>
   </table>
 
