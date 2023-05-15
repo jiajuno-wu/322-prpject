@@ -231,6 +231,7 @@ def viewInquiry():
     inquiry_to_show = Inquiry.query.filter_by(user_id = current_user.id)
     purchase = Purchase.query.filter_by(user_id=current_user.id)
     form = InquiryForm()
+    form.purchase_.choices = [(purchases.id, purchases.PCname) for purchases in Purchase.query.filter_by(user_id = current_user.id)]
     if form.validate_on_submit():
         rand = random.randrange(0, User.query.filter_by(userType = "Employee").count())
         inquiry_to_add = Inquiry(user_id = current_user.id,purchase_id = purchase.first().id,employee_id= User.query.filter_by(userType = "Employee").first().id )
@@ -243,8 +244,9 @@ def viewInquiry():
 
 @view.route('/inquirypage' , methods = ['GET','POST'])
 def openInquiries():
-    inquiries_to_show = Inquiry.query.filter_by(user_id = current_user.id)
-    return render_template('openInquiries.html',inquiries_to_show=inquiries_to_show,Item=Item,Purchase=Purchase)
+    inquiries_to_show_customer = Inquiry.query.filter_by(user_id = current_user.id)
+    inquiries_to_show_employee = Inquiry.query.filter_by(employee_id = current_user.id)
+    return render_template('openInquiries.html',inquiries_to_show_customer=inquiries_to_show_customer,inquiries_to_show_employee=inquiries_to_show_employee,Item=Item,Purchase=Purchase)
 
 @view.route('/inquirypage/<int:inquirys_id>',methods = ['GET','POST'])
 def currentInquiry(inquirys_id):
