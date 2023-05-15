@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField , IntegerField , SubmitField, FloatField, SelectField
 from wtforms.validators import Length , DataRequired
+from ltt.models import Item, Comment, User, Application, Message,PC,Purchase,Inquiry,InqMessages, Feedback
 
 class Additem(FlaskForm):
     id = IntegerField(label= 'id', validators=[DataRequired()])
@@ -42,9 +43,34 @@ class PurchaseForm(FlaskForm):
     submit = SubmitField(label = 'Purchase')
 
 class PCForm(FlaskForm):
+<<<<<<< HEAD
     PCname = StringField(label='PCname',  validators=[DataRequired()])
     CPU = IntegerField(label= 'CPU id', validators=[DataRequired()])
     GPU = IntegerField(label= 'GPU id', validators=[DataRequired()])
     MB = IntegerField(label= 'MB id', validators=[DataRequired()])
     RAM = IntegerField(label= 'RAM id', validators=[DataRequired()])
     submit = SubmitField(label = 'Submit')
+=======
+    PCname = StringField(label='item_name',  validators=[DataRequired()])
+    CPU = IntegerField(label= 'id', validators=[DataRequired()])
+    GPU = IntegerField(label= 'id', validators=[DataRequired()])
+    MB = IntegerField(label= 'id', validators=[DataRequired()])
+    RAM = IntegerField(label= 'id', validators=[DataRequired()])
+    submit = SubmitField(label = 'Create')
+
+class InquiryForm(FlaskForm):
+    purchase_ = SelectField(u'Choose Purchase', choices=[], coerce=int, validate_choice=True)
+    submit = SubmitField(label = 'Open Inquiry')
+
+class AddInquiryMessageForm(FlaskForm):
+    content = StringField(label='content',  validators=[DataRequired()])
+    submit = SubmitField(label='Post Message')
+
+class CloseInquiryForm(FlaskForm):
+    submit = SubmitField(label='Close')
+
+class FeedbackForm(FlaskForm):
+    feedbackType_ = SelectField(u'Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')])
+    content_ = StringField(label='comments',  validators=[DataRequired()])
+    submit = SubmitField(label='Send Feedback')
+>>>>>>> origin/inquiry

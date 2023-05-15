@@ -38,7 +38,10 @@
                   <a class="nav-link" href = /messages>Messages</a>
                   {%endif%}
                   <a class="nav-link disabled">Disabled</a>
-
+                  {%if current_user.userType == "Customer"%}
+                    <a class="nav-link" href = /inquiry>Open Inquiry</a>
+                  {%endif%}
+                  <a class="nav-link" href = /inquirypage>Current Inquiries</a>
                 </div>
               </div>
               {%if current_user.is_active%}
