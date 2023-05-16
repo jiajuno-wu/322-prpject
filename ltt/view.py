@@ -352,16 +352,49 @@ def currentInquiry(inquirys_id):
         return redirect(url_for('view.currentInquiry',inquirys_id = inquirys_id ))
     
     cform = CloseInquiryForm()
+    fform = FeedbackForm()
     if cform.validate_on_submit():
         inquiry_to_show.status = "closed"
+        db.session.commit()
+        feedback_to_add = Feedback(inquiry_id = inquirys_id,feedbackType = fform.feedbackType_.data ,comment_ = fform.conten.data)
+        db.session.add(feedback_to_add)
         db.session.commit()
         return redirect(url_for('view.currentInquiry',inquirys_id = inquirys_id ))
 
     fform = FeedbackForm()
     if fform.validate_on_submit():
-        feedback_to_add = Feedback(inquiry_id = inquirys_id,feedbackType = fform.feedbackType_.data ,comment_ = fform.content_.data)
+        feedback_to_add = Feedback(inquiry_id = inquirys_id,feedbackType = fform.feedbackType_.data ,comment_ = fform.conten.data)
         db.session.add(feedback_to_add)
         db.session.commit()
         return redirect(url_for('view.currentInquiry', inquirys_id = inquirys_id ))
 
     return render_template('displayInquiry.html',form=form,comments=comments,inquiry_to_show = inquiry_to_show,current_user=current_user,User=User,Inquiry = Inquiry,cform=cform,fform = fform,Feedback = Feedback )
+
+@view.route('/processFeedback',methods=['GET','POST'])
+def processFeedback():
+    feedback_to_show_complaint = Feedback.query.filter_by(feedbackType = "Complaint")
+    feedback_to_show_compliment = Feedback.query.filter_by(feedbackType = "Compliment")
+    return render_template('processFeedback.html',feedback_to_show_complaint=feedback_to_show_complaint, feedback_to_show_compliment=feedback_to_show_compliment,Inquiry=Inquiry)
+
+
+@view.route('/giveWarning/<int:user_id>/<int:feedback_id>',methods = ['GET','POST'])
+def giveWarning(user_id,feedback_id):
+    user_to_warn = User.query.get_or_404(user_id)
+    try:
+        user_to_warn.warnings = user_to_warn.warnings + 1
+        db.session.delete(Feedback.query.get_or_404(feedback_id))
+        db.session.commit()
+        return redirect(url_for('view.processFeedback'))
+    except:
+        return 'There was an error in giving warning'
+    
+@view.route('/giveCompliment/<int:user_id>/<int:feedback_id>',methods = ['GET','POST'])
+def giveCompliment(user_id,feedback_id):
+    user_to_compliment = User.query.get_or_404(user_id)
+    try:
+        user_to_compliment.compliments = user_to_compliment.compliments + 1
+        db.session.delete(Feedback.query.get_or_404(feedback_id))
+        db.session.commit()
+        return redirect(url_for('view.processFeedback'))
+    except:
+        return 'There was an error in giving compliment'

@@ -42,7 +42,7 @@
     <div class = "container">
         <form method="POST" class = "form-register">
             {{cform.hidden_tag()}}
-            {{cform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+            {{cform.submit__(class="btn btn-lg btn-block btn-primary mt-2")}}
         </form>
     </div>
 {%else%}
@@ -53,10 +53,11 @@
             {{fform.hidden_tag()}}
             {{fform.feedbackType_.label()}}
             {{fform.feedbackType_(class="form-control", placeholder = "Feedback")}}
-            {{fform.content_.label() }}
-            {{fform.content_(class="form-control")}}
+            {{ fform.conten.label() }}
+            {{ fform.conten(class="form-control")}}
 
-            {{fform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+
+            {{fform.submit_(class="btn btn-lg btn-block btn-primary mt-2")}}
         </form>
     </div>
 

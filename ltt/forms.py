@@ -59,9 +59,9 @@ class AddInquiryMessageForm(FlaskForm):
     submit = SubmitField(label='Post Message')
 
 class CloseInquiryForm(FlaskForm):
-    submit = SubmitField(label='Close')
+    submit__ = SubmitField(label='Close')
 
 class FeedbackForm(FlaskForm):
-    feedbackType_ = SelectField(u'Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')] )
-    content_ = StringField(label='comments',  validators=[DataRequired()])
-    submit = SubmitField(label='Send Feedback')
+    feedbackType_ = SelectField('Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')] )
+    conten = StringField(label='comments')
+    submit_ = SubmitField(label='Send Feedback')

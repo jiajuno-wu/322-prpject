@@ -44,6 +44,9 @@
                   {%if current_user.userType == "Employee"%}
                   <a class="nav-link" href = /inquiry>Answer Inquiry</a>
                   {%endif%}
+                  {%if current_user.userType == "Admin"%}
+                  <a class="nav-link" href = /processFeedback>Process Feedback</a>
+                  {%endif%}
                 </div>
               </div>
               {%if current_user.is_active%}
