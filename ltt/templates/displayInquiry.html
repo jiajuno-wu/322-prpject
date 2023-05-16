@@ -47,21 +47,19 @@
     </div>
 {%else%}
     <h1>THIS INQUIRY IS CLOSED</h1>
-    {%print Feedback.query.filter_by(inquiry_id = inquiry_to_show.id).status %}
-    {%if Feedback.query.filter_by(inquiry_id = inquiry_to_show.id) == None %}
     <h1>Leave Feedback</h1>
     <div class = "container">
         <form method="POST" class = "form-register">
             {{fform.hidden_tag()}}
             {{fform.feedbackType_.label()}}
             {{fform.feedbackType_(class="form-control", placeholder = "Feedback")}}
-            {{ fform.content_.label() }}
-            {{ fform.content_(class="form-control")}}
+            {{fform.content_.label() }}
+            {{fform.content_(class="form-control")}}
 
             {{fform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
         </form>
     </div>
-    {%endif%}
+
 
 {%endif%}
 

@@ -43,14 +43,6 @@ class PurchaseForm(FlaskForm):
     submit = SubmitField(label = 'Purchase')
 
 class PCForm(FlaskForm):
-<<<<<<< HEAD
-    PCname = StringField(label='PCname',  validators=[DataRequired()])
-    CPU = IntegerField(label= 'CPU id', validators=[DataRequired()])
-    GPU = IntegerField(label= 'GPU id', validators=[DataRequired()])
-    MB = IntegerField(label= 'MB id', validators=[DataRequired()])
-    RAM = IntegerField(label= 'RAM id', validators=[DataRequired()])
-    submit = SubmitField(label = 'Submit')
-=======
     PCname = StringField(label='item_name',  validators=[DataRequired()])
     CPU = IntegerField(label= 'id', validators=[DataRequired()])
     GPU = IntegerField(label= 'id', validators=[DataRequired()])
@@ -70,7 +62,6 @@ class CloseInquiryForm(FlaskForm):
     submit = SubmitField(label='Close')
 
 class FeedbackForm(FlaskForm):
-    feedbackType_ = SelectField(u'Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')])
+    feedbackType_ = SelectField(u'Feedback', choices=[('Compliment', 'Compliment'), ('Complaint', 'Complaint')] )
     content_ = StringField(label='comments',  validators=[DataRequired()])
     submit = SubmitField(label='Send Feedback')
->>>>>>> origin/inquiry

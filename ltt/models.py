@@ -93,11 +93,11 @@ class Feedback(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     inquiry_id = db.Column(db.Integer, db.ForeignKey('inquiry.id'))
     feedbackType = db.Column(db.String(120))
-    employee_id = db.Column(db.Integer,db.ForeignKey('User.id'))     
-    customer_id = db.Column(db.Integer,db.ForeignKey('User.id'))
-    status = db.Column(db.String(120), default = "open")
-    comment = db.Column(db.String(),default=None )
+    # employee_id = db.Column(db.Integer,db.ForeignKey('User.id'))     
+    # customer_id = db.Column(db.Integer,db.ForeignKey('User.id'))
+    # status = db.Column(db.String(120), default = "open")
+    comment_ = db.Column(db.String(120))
 
 with app.app_context():
-    #db.drop_all()
+    # db.drop_all()
     db.create_all()

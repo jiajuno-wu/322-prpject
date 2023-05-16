@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 from flask import Blueprint, render_template, redirect,url_for,flash, request
-from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm,PCForm
-=======
-from flask import Blueprint, render_template, redirect,url_for,flash
 from ltt.forms import Additem , CommentForm, RateForm, RegisterUser,LoginForm,DepositForm,PurchaseForm,PCForm,InquiryForm,AddInquiryMessageForm,CloseInquiryForm,FeedbackForm
->>>>>>> origin/inquiry
 from ltt import app
 from ltt import db
 from ltt.models import Item, Comment, User, Application, Message,PC,Purchase,Inquiry,InqMessages, Feedback
@@ -239,6 +234,8 @@ def customize():
             else:
                 flash("purchased")
                 current_user.balance = current_user.balance - sum
+                purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
+                db.session.add(purchase_to_add)
                 db.session.commit()
                 return render_template("customize.html", pform = pform, flag = flag)
         else:
@@ -287,7 +284,6 @@ def messages():
     messages = Message.query.all()
     return render_template('applicationsRejected.html', messages = messages)
 
-<<<<<<< HEAD
 
 @view.route('/buy/<int:id>', methods = ['GET', 'POST'])
 def buy(id):
@@ -303,6 +299,8 @@ def buy(id):
         return redirect(url_for('view.deposit'))
     else:
         current_user.balance = current_user.balance - (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price)
+        purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
+        db.session.add(purchase_to_add)
         db.session.commit()
         return redirect(url_for('view.rate',id = id))
     
@@ -324,13 +322,13 @@ def promote():
     db.session.commit()
     return redirect(url_for('view.prebulid'))
 
-=======
 @view.route('/inquiry',methods = ['GET','POST'])
 def viewInquiry():
-    inquiry_to_show = Inquiry.query.filter_by(user_id = current_user.id)
+    inquiries_to_show_customer = Inquiry.query.filter_by(user_id = current_user.id)
+    inquiries_to_show_employee = Inquiry.query.filter_by(employee_id = current_user.id)
     purchase = Purchase.query.filter_by(user_id=current_user.id)
     form = InquiryForm()
-    form.purchase_.choices = [(purchases.id, purchases.PCname) for purchases in Purchase.query.filter_by(user_id = current_user.id)]
+    form.purchase_.choices = [(purchases.id, PC.query.get_or_404(purchases.pc_id)) for purchases in Purchase.query.filter_by(user_id = current_user.id)]
     if form.validate_on_submit():
         rand = random.randrange(0, User.query.filter_by(userType = "Employee").count())
         inquiry_to_add = Inquiry(user_id = current_user.id,purchase_id = purchase.first().id,employee_id= User.query.filter_by(userType = "Employee").first().id )
@@ -338,14 +336,9 @@ def viewInquiry():
         db.session.commit()
         flash('Succesfully made inquiry')
         return redirect(url_for('view.currentInquiry',inquirys_id = inquiry_to_add.id))
-    return render_template('inquiry.html',form=form,inquiry_to_show = inquiry_to_show)
+    return render_template('inquiry.html',form=form,inquiries_to_show_customer = inquiries_to_show_customer,inquiries_to_show_employee=inquiries_to_show_employee)
 
 
-@view.route('/inquirypage' , methods = ['GET','POST'])
-def openInquiries():
-    inquiries_to_show_customer = Inquiry.query.filter_by(user_id = current_user.id)
-    inquiries_to_show_employee = Inquiry.query.filter_by(employee_id = current_user.id)
-    return render_template('openInquiries.html',inquiries_to_show_customer=inquiries_to_show_customer,inquiries_to_show_employee=inquiries_to_show_employee,Item=Item,Purchase=Purchase)
 
 @view.route('/inquirypage/<int:inquirys_id>',methods = ['GET','POST'])
 def currentInquiry(inquirys_id):
@@ -366,10 +359,9 @@ def currentInquiry(inquirys_id):
 
     fform = FeedbackForm()
     if fform.validate_on_submit():
-        feedback_to_add = Feedback(feedbackType = fform.feedbackType_.data ,comment = fform.content_.data,employee_id = inquiry_to_show.employee_id, customer_id = inquiry_to_show.user_id, inquiry_id = inquiry_to_show.id )
+        feedback_to_add = Feedback(inquiry_id = inquirys_id,feedbackType = fform.feedbackType_.data ,comment_ = fform.content_.data)
         db.session.add(feedback_to_add)
         db.session.commit()
         return redirect(url_for('view.currentInquiry', inquirys_id = inquirys_id ))
 
     return render_template('displayInquiry.html',form=form,comments=comments,inquiry_to_show = inquiry_to_show,current_user=current_user,User=User,Inquiry = Inquiry,cform=cform,fform = fform,Feedback = Feedback )
->>>>>>> origin/inquiry
