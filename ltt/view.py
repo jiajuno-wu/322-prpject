@@ -185,10 +185,16 @@ def login():
 
     return render_template('login.html',form=form)
 
+
+
+
+
+
 @view.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('view.home'))
+
 
 
 
@@ -201,10 +207,18 @@ def deposit():
         return redirect(url_for('view.home'))
     return render_template('deposit.html', form = form)
 
+
+
+
+
 @view.route('/applications', methods = ['GET', 'POST'])
 def verifyApplications():
     applicants = Application.query.all()
     return render_template('applicationList.html', applicants = applicants)
+
+
+
+
 
 
 #this is for the staff
@@ -232,10 +246,15 @@ def setPC():
 
 
 
+
+
+
 @view.route('/prebulid')
 def prebulid():
     pc = PC.query.all()
     return render_template("prebulid.html", pc = pc)
+
+
 
 
 
@@ -277,6 +296,7 @@ def customize():
 
 
 
+
 @view.route('/approval/<int:id>')
 def approval(id):
     application_to_approve = Application.query.get_or_404(id)
@@ -290,6 +310,7 @@ def approval(id):
         return redirect(url_for('view.verifyApplications'))
     except:
         return 'There was an error approving'
+
 
 
 
@@ -309,10 +330,14 @@ def rejection(id):
 
 
 
+
 @view.route('/messages', methods = ['GET', 'POST'])
 def messages():
     messages = Message.query.all()
     return render_template('applicationsRejected.html', messages = messages)
+
+
+
 
 
 @view.route('/buy/<int:id>', methods = ['GET', 'POST'])
@@ -343,7 +368,10 @@ def buy(id):
             db.session.add(purchase_to_add)
             db.session.commit()
             return redirect(url_for('view.rate',id = id))
-    
+
+
+
+
 @view.route('/rate/<int:id>',methods = ['GET', 'POST'])
 def rate(id):
     pc = PC.query.get_or_404(id)
@@ -364,12 +392,18 @@ def rate(id):
         return redirect(url_for('view.prebulid'))
     return render_template('rating.html', rform = rform)
 
+
+
+
 @view.route('/promote')
 def promote():
     pc = PC(PCname = current_user.id, cpu = id_list [0], gpu = id_list [1], ram = id_list [2], MB = id_list [3])
     db.session.add(pc)
     db.session.commit()
     return redirect(url_for('view.prebulid'))
+
+
+
 
 @view.route('/inquiry',methods = ['GET','POST'])
 def viewInquiry():
@@ -386,6 +420,7 @@ def viewInquiry():
         flash('Succesfully made inquiry')
         return redirect(url_for('view.currentInquiry',inquirys_id = inquiry_to_add.id))
     return render_template('inquiry.html',form=form,inquiries_to_show_customer = inquiries_to_show_customer,inquiries_to_show_employee=inquiries_to_show_employee)
+
 
 
 
@@ -419,11 +454,16 @@ def currentInquiry(inquirys_id):
 
     return render_template('displayInquiry.html',form=form,comments=comments,inquiry_to_show = inquiry_to_show,current_user=current_user,User=User,Inquiry = Inquiry,cform=cform,fform = fform,Feedback = Feedback )
 
+
+
+
 @view.route('/processFeedback',methods=['GET','POST'])
 def processFeedback():
     feedback_to_show_complaint = Feedback.query.filter_by(feedbackType = "Complaint")
     feedback_to_show_compliment = Feedback.query.filter_by(feedbackType = "Compliment")
     return render_template('processFeedback.html',feedback_to_show_complaint=feedback_to_show_complaint, feedback_to_show_compliment=feedback_to_show_compliment,Inquiry=Inquiry)
+
+
 
 
 @view.route('/giveWarning/<int:user_id>/<int:feedback_id>',methods = ['GET','POST'])
@@ -437,6 +477,8 @@ def giveWarning(user_id,feedback_id):
     except:
         return 'There was an error in giving warning'
     
+
+
 @view.route('/giveCompliment/<int:user_id>/<int:feedback_id>',methods = ['GET','POST'])
 def giveCompliment(user_id,feedback_id):
     user_to_compliment = User.query.get_or_404(user_id)
@@ -447,3 +489,24 @@ def giveCompliment(user_id,feedback_id):
         return redirect(url_for('view.processFeedback'))
     except:
         return 'There was an error in giving compliment'
+    
+
+
+
+
+
+
+
+
+
+@view.route('/deletepc/<int:id>')  #a route bind to a delete button hit when the button is pressed
+def deletepc(id):
+    pc_to_delete = PC.query.get_or_404(id)
+    try:
+        user = User.query.get_or_404(pc_to_delete.creator_id)
+        user.warnings = user.warnings + 1
+        db.session.delete(pc_to_delete)
+        db.session.commit()
+        return redirect(url_for('view.prebulid'))
+    except:
+        return 'There was an error approving'
