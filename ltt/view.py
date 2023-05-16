@@ -162,6 +162,16 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(username = form.username_.data).first()
+        if attempted_user.userType == "Employee":
+            if attempted_user.compliments > 3:
+                flash("you are promote")
+                attempted_user.compliments = 0
+                db.session.commit()
+            if attempted_user.warnings > 6:
+                flash("you are fired")
+                attempted_user.status = "Invalid"
+                db.session.commit()
+
         if attempted_user.status == "Invalid":
             flash("you are suspended")
             return render_template('login.html',form=form)
