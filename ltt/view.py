@@ -63,26 +63,40 @@ def delete(id):
 def views(items_id):
     item_to_show = Item.query.get_or_404(items_id)
     c = Comment.query.filter_by(item_id = items_id)
+    comment_to_submit = ""
     form = CommentForm()
     if form.validate_on_submit():
         # if form.content.data contain taboo then give  warning
         text = form.content.data
         text = text.split(' ')
-        for t in TABOO:
-            if t in text :
-                if(current_user.is_active == False):
-                    flash('Your comment contain taboo',category = 'danger')
-                    return redirect(url_for('view.views', items_id = items_id)) 
-                else:
-                    current_user.warnings = current_user.warnings + 1
-                    db.session.commit()
-                    if current_user.warnings == 3:
-                        current_user.status = "Invalid"
-                        db.session.commit()
-                
-                    flash('Your comment contain taboo',category = 'danger')
-                    return redirect(url_for('view.views', items_id = items_id)) 
-        comment = Comment(content = form.content.data, item_id = items_id)
+        iterator = 0
+        taboo_count = 0
+        for t in text:
+            if t in TABOO :
+                taboo_count = taboo_count+1
+                comment_to_submit = comment_to_submit +" "+ ('*'*len(t))
+            else:
+                comment_to_submit = comment_to_submit + " " +  text[iterator]
+            iterator = iterator + 1
+            
+
+        if(current_user.is_active == False and taboo_count != 0):
+            flash('Your comment contain taboo',category = 'danger')
+            return redirect(url_for('view.views', items_id = items_id)) 
+        else:
+            if taboo_count > 3:
+                current_user.warnings = current_user.warnings + 2
+                flash('Your comment contain TOO many Taboos',category = 'danger')
+                return redirect(url_for('view.views', items_id = items_id)) 
+            else:
+                current_user.warnings = current_user.warnings + 1
+                db.session.commit()
+
+            if current_user.warnings == 3:
+                current_user.status = "Invalid"
+                db.session.commit()
+
+        comment = Comment(content = comment_to_submit, item_id = items_id)
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('view.views', items_id = items_id))
