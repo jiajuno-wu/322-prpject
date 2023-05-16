@@ -59,6 +59,7 @@ class PC(db.Model):
     gpu = db.Column(db.Integer, db.ForeignKey('item.id'))
     ram = db.Column(db.Integer, db.ForeignKey('item.id'))
     MB = db.Column(db.Integer, db.ForeignKey('item.id'))
+    creator_id = db.Column(db.Integer,db.ForeignKey('User.id'))
     rate_count = db.Column(db.Integer, default = 0)
     rate_acc = db.Column(db.Integer,default = 0)
 

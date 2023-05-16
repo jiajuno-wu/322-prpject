@@ -86,8 +86,13 @@ def views(items_id):
         else:
             if taboo_count > 3:
                 current_user.warnings = current_user.warnings + 2
-                flash('Your comment contain TOO many Taboos',category = 'danger')
-                return redirect(url_for('view.views', items_id = items_id)) 
+                db.session.commit()
+                flash('Your comment contain TOO many Taboos',category = 'danger') 
+                if current_user.warnings >= 3:
+                    current_user.status = "Invalid"
+                    db.session.commit()
+                return redirect(url_for('view.views', items_id = items_id))
+
             else:
                 current_user.warnings = current_user.warnings + 1
                 db.session.commit()
@@ -201,12 +206,13 @@ def setPC():
         gpu = Item.query.get_or_404(form.GPU.data)
         ram = Item.query.get_or_404(form.RAM.data)
         mb = Item.query.get_or_404(form.MB.data)
-        if cpu.item_c == gpu.item_c == ram.item_c == mb.item_c:
+        if (cpu.item_c == gpu.item_c == ram.item_c == mb.item_c):
             pc = PC(PCname = form.PCname.data,
                     cpu = cpu.id,
                     gpu = gpu.id,
                     ram = ram.id,
-                    MB = mb.id)
+                    MB = mb.id,
+                    creator_id = current_user.id )
             db.session.add(pc)
             db.session.commit()
             return redirect(url_for('view.setPC'))
@@ -325,6 +331,15 @@ def rate(id):
     if rform.validate_on_submit():
         pc.rate_count = pc.rate_count + 1
         pc.rate_acc = pc.rate_acc + rform.rate.data
+        if (rform.rate.data <= 1):
+            creator = User.query.get_or_404(pc.creator_id)
+            creator.warnings = creator.warnings + 1
+            db.session.delete(pc)
+            db.session.commit()
+        elif(rform.rate.data >= 5):
+            creator = User.query.get_or_404(pc.creator_id)
+            creator.compliment = creator.compliment + 1
+            db.session.commit()
         db.session.commit()
         return redirect(url_for('view.prebulid'))
     return render_template('rating.html', rform = rform)
