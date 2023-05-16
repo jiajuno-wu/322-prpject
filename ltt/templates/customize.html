@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{%block title%} Bulid {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+
+{% block contend %}
+
+<h1>buy customized PC</h1>
+<div class = "container">
+    <form method="POST" class = "form-register">
+        {{pform.hidden_tag()}}
+        
+        {{ pform.PCname.label() }}
+        {{ pform.PCname(class="form-control")}}
+
+        {{ pform.CPU.label() }}
+        {{ pform.CPU(class="form-control")}}
+
+        {{ pform.GPU.label() }}
+        {{ pform.GPU(class="form-control")}}
+
+        {{ pform.MB.label() }}
+        {{ pform.MB(class="form-control")}}
+
+        {{ pform.RAM.label() }}
+        {{ pform.RAM(class="form-control")}}
+
+        {{pform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+    {% if flag == 1 %}
+    <form>
+       <a href="/promote">promote</a>
+    </form>
+    {%endif%}
+
+</div>
+
+{% endblock %}

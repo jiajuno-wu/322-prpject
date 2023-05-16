@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{%block title%} HOME {% endblock %}
+
+{% block contend %}
+<section id="sidebar">
+    <div>
+        <h6 class="p-1 border-bottom">Part</h6>
+        <ul>
+            <li><a href="#">CPU</a></li>
+            <li><a href="#">GPU</a></li>
+            <li><a href="#">MotherBoard</a></li>
+            <li><a href="#">RAM</a></li>
+            <li><a href="#">Storage</a></li>
+        </ul>
+    </div>
+</section>
+<section id="products">
+    <div class="container">
+        <div class="row">
+            {% for item in items %}
+            <div class="col-lg-3 col-sm-4 col-11 offset-sm-0 offset-1">
+                <div class="card">
+                    <img class="card-img-top" src="/static/pics/{{item.item_image}}" alt="Card image cap">
+                    <div class="card-body">
+                      <p class="card-text">Item name : {{item.item_name}}</p>
+                      <p class="card-text">Item price: ${{item.item_price}}</p>
+                      <a href="/itempage/{{item.id}}" class = "btn btn-primary">view</a>   
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

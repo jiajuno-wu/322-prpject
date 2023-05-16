@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{%block title%} Deposit Page {% endblock %}
+
+{% block contend %}
+
+<h1>Add funds</h1>
+<div class = "container">
+    <form method="POST" class = "form-register">
+        {{form.hidden_tag()}}
+
+        {{form.amount.label()}}
+        {{form.amount(class="form-control", placeholder = "Amount" )}}
+        
+        {{form.submit (class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+</div>
+
+
+
+{% endblock %}

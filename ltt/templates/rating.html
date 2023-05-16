@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{%block title%} Rate {% endblock %}
+
+
+
+{% block contend %}
+<div class = "container">
+    <form method="POST" class = "form-register">
+        {{rform.hidden_tag()}}
+
+        {{ rform.rate.label() }}
+        {{ rform.rate(class="form-control")}}
+
+        {{ rform.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+</div>
+{% endblock %}

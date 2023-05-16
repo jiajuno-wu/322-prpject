@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+<h1>Item List</h1>
+<table class = "table table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> item id</th>
+            <th scope="col">item name </th>
+            <th scope="col"> item price</th>
+            <th scope="col">item image </th>
+            <th scope="col">item type </th>
+            <th scope="col">item compatibilty type </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{item.id}}</td>
+            <td>{{item.item_name}}</td>
+            <td>{{item.item_price}}</td>
+            <td>{{item.item_image}}</td>
+            <td>{{item.item_type}}</td>
+            <td>{{item.item_c}}</td>
+            <td>
+                <a href="/delete/{{item.id}}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+
+
+{% endblock %}

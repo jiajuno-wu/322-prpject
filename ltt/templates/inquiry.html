@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{%if current_user.userType == "Customer"%}
+<h1>Make Inquiry</h1>
+<div class = "container">
+    <form method="POST" class = "form-register">
+        {{form.hidden_tag()}}
+        {{form.purchase_.label()}}
+        {{form.purchase_(class="form-control", placeholder = "Password" )}}
+        
+        {{form.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+    </form>
+</div>
+{%endif%}
+<table class = "table table-hover">
+  <tbody>
+    {%if current_user.userType == "Employee"%}
+      {%for inquiry in inquiries_to_show_employee%}
+        <tr>
+          <td><a href = "{{ '/inquirypage/%s'%inquiry.id }}">{{inquiry.id}}</a></td>
+        </tr>
+      {%endfor%}
+    {%elif current_user.userType == "Customer"%}
+      {%for inquiry in inquiries_to_show_customer%}
+        <tr>
+          <td><a href = "{{ '/inquirypage/%s'%inquiry.id }}">{{inquiry.id}}</a></td>
+        </tr>
+        {%endfor%}
+    {%endif%}
+
+  </tbody>
+</table>
+
+
+
+{% endblock %}

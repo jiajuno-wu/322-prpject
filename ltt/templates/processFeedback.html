@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{%block title%} dispaly {% endblock %}
+
+{% block contend %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+        <h1>Complaints</h1>
+    <table class = "table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"> Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+        {%for feedback in feedback_to_show_complaint%}
+
+        <tr>
+            <td>{{feedback.comment_}}</td>
+            <td><a href ="{{ '/inquirypage/%s'%feedback.inquiry_id }}" >Open Inquiry Page</a></td>
+        </tr>
+        <td>  
+            <a href= "/giveCompliment/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).user_id,feedback.id) }}" >Compliment Customer</a>
+        </td>
+        <td>
+            <a href= "/giveWarning/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).user_id,feedback.id) }}" >Warn Customer</a>
+        </td>
+        <td>
+            <a href="/giveCompliment/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).employee_id,feedback.id) }}">Compliment Employee</a>
+        </td>
+        <td>
+            <a href= "/giveWarning/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).employee_id,feedback.id) }}" >Warn Employee</a>
+        </td>
+        
+        {% endfor %}
+    </tbody>
+
+</table>
+        <h1>Compliments</h1>
+    <table class = "table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"> Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+        {%for feedback in feedback_to_show_compliment%}
+        <tr>
+            <td>{{feedback.comment_}}</td>
+            <td><a href ="{{ '/inquirypage/%s'%feedback.inquiry_id }}" >Open Inquiry Page</a></td>
+        </tr>
+        <td> 
+            <a href= "/giveCompliment/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).user_id,feedback.id) }}" >Compliment Customer</a>
+        </td>
+        <td>
+            <a href= "/giveWarning/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).user_id,feedback.id) }}" >Warn Customer</a>
+        </td>
+        <td>
+            <a href="/giveCompliment/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).employee_id,feedback.id) }}">Compliment Employee</a>
+        </td>
+        <td>
+            <a href= "/giveWarning/{{ "{}/{}".format(Inquiry.query.get_or_404(feedback.inquiry_id).employee_id,feedback.id) }}" >Warn Employee</a>
+        </td>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+{%endblock%}

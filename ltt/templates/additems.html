@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{%block title%} Add {% endblock %}
+
+{% block contend %}
+{%if current_user.userType == "Employee"%} 
+    <h1>Add items</h1>
+    <div class = "container">
+        <form method="POST" class = "form-register">
+            {{form.hidden_tag()}}
+            
+            {{ form.id.label() }}
+            {{ form.id(class="form-control")}}
+            
+
+            {{ form.item_name.label() }}
+            {{ form.item_name(class="form-control")}}
+
+            {{ form.item_price.label() }}
+            {{ form.item_price(class="form-control")}}
+
+            {{ form.item_image.label() }}
+            {{ form.item_image(class="form-control", placeholder="path for image")}}
+
+            {{ form.item_type.label() }}
+            {{ form.item_type(class="form-control", placeholder = "CPU/GPU/MB/RAM/Storage")}}
+
+            {{ form.item_c.label() }}
+            {{ form.item_c(class="form-control", placeholder = "item compatibilty int")}}
+
+            {{form.submit(class="btn btn-lg btn-block btn-primary mt-2")}}
+        </form>
+    </div>
+{%else%}
+    <div class = "container">   
+        <h1>YOU DONT HAVE PERMISSION TO ADD ITEMS </h1>  
+    </div>
+{%endif%}
+
+{% endblock %}
