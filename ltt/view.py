@@ -323,16 +323,26 @@ def buy(id):
     ram = Item.query.get_or_404(pc.ram)
     mb = Item.query.get_or_404(pc.MB)
     sum = cpu.item_price + gpu.item_price + ram.item_price + mb.item_price
+    flag = 0 #if 0 mean customer have no 10% off
+    if current_user.compliments >= 3:
+        flag = 1
     if current_user.balance < sum :
         current_user.warnings = current_user.warnings + 1
         db.session.commit()
         return redirect(url_for('view.deposit'))
     else:
-        current_user.balance = current_user.balance - (cpu.item_price + gpu.item_price + ram.item_price + mb.item_price)
-        purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
-        db.session.add(purchase_to_add)
-        db.session.commit()
-        return redirect(url_for('view.rate',id = id))
+        if flag == 1:
+            current_user.balance = current_user.balance - 0.9*sum
+            purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
+            db.session.add(purchase_to_add)
+            db.session.commit()
+            return redirect(url_for('view.rate',id = id))
+        else :
+            current_user.balance = current_user.balance - sum
+            purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
+            db.session.add(purchase_to_add)
+            db.session.commit()
+            return redirect(url_for('view.rate',id = id))
     
 @view.route('/rate/<int:id>',methods = ['GET', 'POST'])
 def rate(id):
