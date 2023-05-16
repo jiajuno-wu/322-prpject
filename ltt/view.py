@@ -9,24 +9,28 @@ import random
 
 view = Blueprint("view",__name__)
 
+# Banned words
 TABOO = ["dead","death"]
 
 id_list = [0,0,0,0]
 
 
+# The default URL redirects home and shows all items
 @view.route('/')
-@view.route('/home')   #home page to show all the item
+@view.route('/home')
 def home():
     items = Item.query.all()
     return render_template("home.html", items = items)
 
 
-
-@view.route('/additem',methods = ['GET','POST'])  #page for staff to add item
+# Page for staff to add items
+@view.route('/additem',methods = ['GET','POST'])
 def additem():
     form = Additem()
    
-    if form.validate_on_submit():  # function is called when press submit button
+    # Function called when SUBMIT button is pressed
+    # adds item to database, and returns to base page
+    if form.validate_on_submit():
         item_to_add = Item(
                        id = form.id.data,
                        item_name = form.item_name.data,
@@ -40,14 +44,14 @@ def additem():
     return render_template('additems.html',form=form,current_user=current_user)
 
 
-
-@view.route('/displayItem')   #page for staff to view item
+# Displays all items
+@view.route('/displayItem')
 def displayItem():
     items = Item.query.all()
     return render_template('displayItem.html', items = items)
 
-
-@view.route('/delete/<int:id>')  #a route bind to a delete button hit when the button is pressed
+# A route bind to a delete button hit when the button is pressed
+@view.route('/delete/<int:id>')
 def delete(id):
     item_to_delete = Item.query.get_or_404(id)
     try:
@@ -57,16 +61,15 @@ def delete(id):
     except:
         return 'There was an error approving'
 
-
-
-@view.route('/itempage/<int:items_id>', methods = ['GET','POST'])   #item page
+# Loads page for particular item
+@view.route('/itempage/<int:items_id>', methods = ['GET','POST'])
 def views(items_id):
     item_to_show = Item.query.get_or_404(items_id)
     c = Comment.query.filter_by(item_id = items_id)
     comment_to_submit = ""
     form = CommentForm()
     if form.validate_on_submit():
-        # if form.content.data contain taboo then give  warning
+        # if form.content.data contain taboo then give warning and censor
         text = form.content.data
         text = text.split(' ')
         iterator = 0
@@ -106,6 +109,7 @@ def views(items_id):
         db.session.commit()
         return redirect(url_for('view.views', items_id = items_id))
 
+    # Takes ratings and assigns it to item
     rform = RateForm()
     if rform.validate_on_submit():
         item_to_show.rate_count = item_to_show.rate_count + 1
@@ -113,6 +117,7 @@ def views(items_id):
         db.session.commit()
         return redirect(url_for('view.views', items_id = items_id))
     
+    # Allows user to purchase, and warns if they don't have the money
     Pform = PurchaseForm()
     if Pform.validate_on_submit():
         if(current_user.balance >= item_to_show.item_price):
@@ -130,13 +135,12 @@ def views(items_id):
 
     return render_template('item.html',item_to_show = item_to_show,c = c ,form = form, rform = rform,Pform = Pform,current_user=current_user)
 
-
-
-
+# Registration page allows users to sign up
 @view.route('/register', methods = ['GET','POST']) #Register route for users
 def register():
     form = RegisterUser()
     if form.validate_on_submit():
+        # If signing up as customer, sends application instead of automatic entry
         if form.userType_.data == "Customer":
             application_to_add = Application(username = form.username_.data,
                                              password = form.password_.data)
@@ -154,26 +158,28 @@ def register():
         return redirect(url_for('view.login'))
     return render_template('register.html', form = form)
 
-
-
-
+# Login page
 @view.route('/login',methods = ['GET','POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(username = form.username_.data).first()
         if attempted_user.userType == "Employee":
+            # If the user is an employee with more than three compliments
+            # they are promoted, and then it is reset
             if attempted_user.compliments > 3:
-                flash("you are promote")
+                flash("You are promoted")
                 attempted_user.compliments = 0
                 db.session.commit()
+            # If they have more than six warnings
+            # they are fired, and banned
             if attempted_user.warnings > 6:
-                flash("you are fired")
+                flash("You are fired")
                 attempted_user.status = "Invalid"
                 db.session.commit()
 
         if attempted_user.status == "Invalid":
-            flash("you are suspended")
+            flash("You are suspended")
             return render_template('login.html',form=form)
         if attempted_user and attempted_user.check_password_correction (attempted_password = form.password_.data):
             login_user(attempted_user)
@@ -185,19 +191,14 @@ def login():
 
     return render_template('login.html',form=form)
 
-
-
-
-
-
+# Logs out
 @view.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('view.home'))
 
-
-
-
+# Runs the deposit form, and then adds the input
+# number to the existing balance
 @view.route('/deposit',methods= ['GET','POST'])
 def deposit():
     form = DepositForm()
@@ -207,21 +208,7 @@ def deposit():
         return redirect(url_for('view.home'))
     return render_template('deposit.html', form = form)
 
-
-
-
-
-@view.route('/applications', methods = ['GET', 'POST'])
-def verifyApplications():
-    applicants = Application.query.all()
-    return render_template('applicationList.html', applicants = applicants)
-
-
-
-
-
-
-#this is for the staff
+# For staff, this creates the PC model
 @view.route('/setPC',methods = ['GET','POST'])
 def setPC():
     form = PCForm()
@@ -244,21 +231,13 @@ def setPC():
             return redirect(url_for('view.setPC'))
     return render_template('setPC.html', form = form)
 
-
-
-
-
-
+# Displays all existing PC builds
 @view.route('/prebulid')
 def prebulid():
     pc = PC.query.all()
     return render_template("prebulid.html", pc = pc)
 
-
-
-
-
-#this is for the user
+# Allows user to customize PC parts
 @view.route('/customize',methods = ['GET','POST'])
 def customize():
     flag = 0 #if flag is 0 which mean it is no compatiable
@@ -272,16 +251,20 @@ def customize():
         id_list [1] = pform.GPU.data
         id_list [2] = pform.RAM.data
         id_list [3] = pform.MB.data
+        # Adds the prices of all of the parts
         sum = cpu.item_price + gpu.item_price + ram.item_price + mb.item_price
+        # Confirms compatibility
         if cpu.item_c == gpu.item_c == ram.item_c == mb.item_c:
             flag = 1
+            # Confirms balance is sufficient
+            # and adds to user's history if so
             if current_user.balance < sum:
-                flash("not enough balance") 
+                flash("Not enough balance") 
                 current_user.warnings = current_user.warnings + 1
                 db.session.commit()
                 return redirect(url_for('view.deposit'))
             else:
-                flash("purchased")
+                flash("Purchased")
                 current_user.balance = current_user.balance - sum
                 purchase_to_add = Purchase(user_id = current_user.id)
                 db.session.add(purchase_to_add)
@@ -293,10 +276,14 @@ def customize():
             return redirect(url_for('view.customize'))
     return render_template("customize.html", pform = pform, flag = flag)
 
+# Displays for employee all existing applications from potential customers
+@view.route('/applications', methods = ['GET', 'POST'])
+def verifyApplications():
+    applicants = Application.query.all()
+    return render_template('applicationList.html', applicants = applicants)
 
-
-
-
+# Approves the potential customer,
+# and deletes application and user to users list
 @view.route('/approval/<int:id>')
 def approval(id):
     application_to_approve = Application.query.get_or_404(id)
@@ -311,10 +298,7 @@ def approval(id):
     except:
         return 'There was an error approving'
 
-
-
-
-
+# Rejects user, deleted application, and sends report to admin
 @view.route('/rejection/<int:id>')
 def rejection(id):
     application_to_reject = Application.query.get_or_404(id)
@@ -327,19 +311,13 @@ def rejection(id):
     except:
         return 'There was an error rejecting'
 
-
-
-
-
+# Admin's page to see reports about rejected visitors
 @view.route('/messages', methods = ['GET', 'POST'])
 def messages():
     messages = Message.query.all()
     return render_template('applicationsRejected.html', messages = messages)
 
-
-
-
-
+# For users to buy items
 @view.route('/buy/<int:id>', methods = ['GET', 'POST'])
 def buy(id):
     pc = PC.query.get_or_404(id)
@@ -369,9 +347,7 @@ def buy(id):
             db.session.commit()
             return redirect(url_for('view.rate',id = id))
 
-
-
-
+# Sets rating for PC builds
 @view.route('/rate/<int:id>',methods = ['GET', 'POST'])
 def rate(id):
     pc = PC.query.get_or_404(id)
@@ -379,11 +355,13 @@ def rate(id):
     if rform.validate_on_submit():
         pc.rate_count = pc.rate_count + 1
         pc.rate_acc = pc.rate_acc + rform.rate.data
+        # Warns user if PC is rated low
         if (rform.rate.data <= 1):
             creator = User.query.get_or_404(pc.creator_id)
             creator.warnings = creator.warnings + 1
             db.session.delete(pc)
             db.session.commit()
+        # Compliments user is PC is rated high
         elif(rform.rate.data >= 5):
             creator = User.query.get_or_404(pc.creator_id)
             creator.compliment = creator.compliment + 1
@@ -392,9 +370,7 @@ def rate(id):
         return redirect(url_for('view.prebulid'))
     return render_template('rating.html', rform = rform)
 
-
-
-
+# Promotes a PC to the database
 @view.route('/promote')
 def promote():
     pc = PC(PCname = current_user.id, cpu = id_list [0], gpu = id_list [1], ram = id_list [2], MB = id_list [3])
@@ -402,9 +378,7 @@ def promote():
     db.session.commit()
     return redirect(url_for('view.prebulid'))
 
-
-
-
+# Page for employee to check inquiries
 @view.route('/inquiry',methods = ['GET','POST'])
 def viewInquiry():
     inquiries_to_show_customer = Inquiry.query.filter_by(user_id = current_user.id)
