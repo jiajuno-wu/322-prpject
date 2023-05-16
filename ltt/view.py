@@ -283,7 +283,7 @@ def customize():
             else:
                 flash("purchased")
                 current_user.balance = current_user.balance - sum
-                purchase_to_add = Purchase(user_id = current_user.id,pc_id = pc.id)
+                purchase_to_add = Purchase(user_id = current_user.id)
                 db.session.add(purchase_to_add)
                 db.session.commit()
                 return render_template("customize.html", pform = pform, flag = flag)
@@ -492,19 +492,13 @@ def giveCompliment(user_id,feedback_id):
     
 
 
-
-
-
-
-
-
-
 @view.route('/deletepc/<int:id>')  #a route bind to a delete button hit when the button is pressed
 def deletepc(id):
     pc_to_delete = PC.query.get_or_404(id)
     try:
         user = User.query.get_or_404(pc_to_delete.creator_id)
         user.warnings = user.warnings + 1
+        db.session.commit()
         db.session.delete(pc_to_delete)
         db.session.commit()
         return redirect(url_for('view.prebulid'))
