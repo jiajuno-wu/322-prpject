@@ -266,9 +266,6 @@ def customize():
             else:
                 flash("Purchased")
                 current_user.balance = current_user.balance - sum
-                purchase_to_add = Purchase(user_id = current_user.id)
-                db.session.add(purchase_to_add)
-                db.session.commit()
                 return render_template("customize.html", pform = pform, flag = flag)
         else:
             flag = 0
@@ -355,17 +352,17 @@ def rate(id):
     if rform.validate_on_submit():
         pc.rate_count = pc.rate_count + 1
         pc.rate_acc = pc.rate_acc + rform.rate.data
-        # Warns user if PC is rated low
-        if (rform.rate.data <= 1):
-            creator = User.query.get_or_404(pc.creator_id)
-            creator.warnings = creator.warnings + 1
-            db.session.delete(pc)
-            db.session.commit()
-        # Compliments user is PC is rated high
-        elif(rform.rate.data >= 5):
-            creator = User.query.get_or_404(pc.creator_id)
-            creator.compliment = creator.compliment + 1
-            db.session.commit()
+        # # Warns user if PC is rated low
+        # if (rform.rate.data <= 1):
+        #     creator = User.query.get_or_404(pc.creator_id)
+        #     creator.warnings = creator.warnings + 1
+        #     db.session.delete(pc)
+        #     db.session.commit()
+        # # Compliments user is PC is rated high
+        # elif(rform.rate.data >= 5):
+        #     creator = User.query.get_or_404(pc.creator_id)
+        #     creator.compliment = creator.compliment + 1
+        #     db.session.commit()
         db.session.commit()
         return redirect(url_for('view.prebulid'))
     return render_template('rating.html', rform = rform)
@@ -373,7 +370,7 @@ def rate(id):
 # Promotes a PC to the database
 @view.route('/promote')
 def promote():
-    pc = PC(PCname = current_user.id, cpu = id_list [0], gpu = id_list [1], ram = id_list [2], MB = id_list [3])
+    pc = PC(PCname = current_user.id, cpu = id_list [0], gpu = id_list [1], ram = id_list [2], MB = id_list [3],creator_id=current_user.id)
     db.session.add(pc)
     db.session.commit()
     return redirect(url_for('view.prebulid'))
@@ -470,9 +467,9 @@ def giveCompliment(user_id,feedback_id):
 def deletepc(id):
     pc_to_delete = PC.query.get_or_404(id)
     try:
-        user = User.query.get_or_404(pc_to_delete.creator_id)
-        user.warnings = user.warnings + 1
-        db.session.commit()
+        # user = User.query.get_or_404(pc_to_delete.creator_id)
+        # user.warnings = user.warnings + 1
+        # db.session.commit()
         db.session.delete(pc_to_delete)
         db.session.commit()
         return redirect(url_for('view.prebulid'))
